@@ -2,6 +2,7 @@
   "name": "react-view",
   "version": "0.0.1",
   "dependencies": {
+    "jquery": "^2.2.4",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
     "redux": "^3.5.2"

@@ -1,23 +1,88 @@
 import React from 'react';
+import {TileCell}  from './TileCell.jsx';
+
+var tileCache;
+var downPoint;
+var tile;
 /**
  * 
  */
 export const Map = React.createClass({
     getInitialState: function(){
         return {
-            provider:this.props.provider,
+            width:this.props.width,
+            height:this.props.height,
+            server:this.props.server,
             center:this.props.center,
             zoom:this.props.zoom
         };
     },
+    handleDrag: function(event) {
+        var offset = [event.clientX-downPoint[0], event.clientY-downPoint[1]];
+        var lonlat = this.getOffsetLonlat(offset);
+        downPoint = [event.clientX,event.clientY];
+        this.setState({center:[lonlat.lon,lonlat.lat]});
+    },
+    handleDown: function(event){
+        var map = this.refs.map;
+        downPoint = [event.clientX,event.clientY];
+        map.onmousemove = this.handleDrag;
+        map.onmouseup = function(event){
+            map.onmousemove = null;
+            map.onmouseup = null;
+        }
+    },
+    getOffsetLonlat:function(offset){
+        var realMaxCoordinate = tile.realMaxCoordinate;
+        var scaleValue = tile.scaleValue;
+        var column = realMaxCoordinate.column - offset[0]/scaleValue;
+        var row = realMaxCoordinate.row - offset[1]/scaleValue;
+        var coordinate = realMaxCoordinate.clone();
+        coordinate.row = row;
+        coordinate.column = column;
+        var lonlat = tile.provider.coordinateLocation(coordinate);
+        return lonlat;
+    },
+    handleMouseWheel: function(event){
+        var delta = 0;
+        if (event.wheelDelta) {
+            delta = event.wheelDelta/120; 
+            if (window.opera) delta = -delta;
+        } else if (event.detail) {
+            delta = -event.detail/3;
+        }else if(event.deltaY){
+            delta = event.deltaY>0?-1:1;
+        }
+       
+        if(delta!==0){
+            var state = this.state;
+            var scale = delta>0?0.5:2;
+            var offset = [(state.width*0.5 - event.clientX)*scale,(state.height*0.5 - event.clientY)*scale];
+            var lonlat = this.getOffsetLonlat(offset);
+            var zoom = parseInt(state.zoom)+delta;
+            if(zoom<1){
+                zoom = 1;
+            }else if(zoom>20){
+                zoom = 20;
+            }
+            this.setState({center:[lonlat.lon,lonlat.lat],zoom:zoom});
+            // var thisObj = this;
+            // var zoomCallBack = function(){
+            //     $(this).removeAttr("style");
+            //     thisObj.setState({center:[lonlat.lon,lonlat.lat],zoom:zoom});
+            // }
+            // $(this.refs.map).animate({zoom:delta>0?2:0.5},100,zoomCallBack)
+        }
+    },
     render: function() {
-        var width = this.props.width;
-        var height = this.props.height;
-        var halftWidth = width*0.5;
-        var haltHeight = height*0.5;
-        var tile = this.props.tile;
-        
-        var zoom = tile.zoom;
+        var state = this.state;
+        var width = state.width;
+        var height = state.height;
+        var server = state.server;
+        var center = state.center;
+        var zoom = state.zoom;
+
+        tile = server.getMapTile(center[0],center[1],zoom);
         var coordinate = tile.coordinate;
         var offsetX = tile.offsetX;
         var offsetY = tile.offsetY;
@@ -28,9 +93,8 @@ export const Map = React.createClass({
         var tileWidth = provider.tileWidth;
         var tileHeight = provider.tileHeight;
         //
-        var x = halftWidth-offsetX;
-        var y = haltHeight-offsetY;
-
+        var x = width*0.5-offsetX;
+        var y = height*0.5-offsetY;
         var checkState = function (){
             var len = directions.length;
             for (var index = 0; index < len; index++) {
@@ -40,10 +104,18 @@ export const Map = React.createClass({
             }
             return false;
         }
+        if(!tileCache){
+            tileCache = {};
+        }
         var turn = function (direaction,step) {
             coordinate = coordinate[direaction](step);
+            if(urls = tileCache[coordinate]){
+                cells.push(<TileCell x={x} y={y} urls={urls} ></TileCell>)
+                return ;
+            } 
             urls = provider.getTileUrls(coordinate);
             if(urls){
+                tileCache[coordinate] = urls;
                 cells.push(<TileCell x={x} y={y} urls={urls} ></TileCell>)
             } 
         }
@@ -53,10 +125,7 @@ export const Map = React.createClass({
         var index = 0;//方向
         var j=1;//步速
         var z=1;//某一个方向的总步数
-        var count = 0;
-        var date = new Date();
         while(forFlag){
-            count++;
             switch(index){//right,down,left,up
                 case 0:
                     x += tileWidth;
@@ -104,33 +173,13 @@ export const Map = React.createClass({
                 j=z;
             }
         }
-        console.log(count,new Date() - date)
         return (
-           <div className="map"  >
+           <div className="map" ref="map" onWheel={this.handleMouseWheel} onMouseDown={this.handleDown} >
                 {cells}
            </div>
        );
     }
 });
-/**
- * 
- */
-const TileCell = React.createClass({
-    handleDragStart:function(){
-        return false;
-    },
-    render: function() {
-        var urls = this.props.urls;
-        var len = urls.length;
-        var style = {top:this.props.y,left:this.props.x};
-        var imgs = [];
-        for (var index = 0; index < len; index++) {
-            imgs.push(<img src={urls[index]} draggable="false" onDragStart={this.handleMouse}  />)
-        }
-        return (
-           <div className="tilecell" style={style}  >
-                {imgs}
-           </div>
-       );
-    }
-});
+
+
+

@@ -20348,7 +20348,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var downPoint;
 	/**
 	 * 
 	 */
@@ -20368,6 +20367,60 @@
 	        window.addEventListener('resize', this.handleResize);
 	    },
 	    handleResize: function handleResize(event) {},
+	    render: function render() {
+	        var state = this.state;
+	        var width = state.width;
+	        var height = state.height;
+	        if (!width || !height) {
+	            return null;
+	        }
+	        var server = new MapServer(state.provider);
+	        var center = state.center;
+	        return _react2.default.createElement(
+	            'div',
+	            { className: 'mapbox', ref: 'mapbox' },
+	            _react2.default.createElement(_Map.Map, { width: width, height: height, server: server, center: center, zoom: state.zoom })
+	        );
+	    }
+	});
+
+/***/ },
+/* 169 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.Map = undefined;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _TileCell = __webpack_require__(170);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var tileCache;
+	var downPoint;
+	var tile;
+	/**
+	 * 
+	 */
+	var Map = exports.Map = _react2.default.createClass({
+	    displayName: 'Map',
+
+	    getInitialState: function getInitialState() {
+	        return {
+	            width: this.props.width,
+	            height: this.props.height,
+	            server: this.props.server,
+	            center: this.props.center,
+	            zoom: this.props.zoom
+	        };
+	    },
 	    handleDrag: function handleDrag(event) {
 	        var offset = [event.clientX - downPoint[0], event.clientY - downPoint[1]];
 	        var lonlat = this.getOffsetLonlat(offset);
@@ -20375,16 +20428,15 @@
 	        this.setState({ center: [lonlat.lon, lonlat.lat] });
 	    },
 	    handleDown: function handleDown(event) {
-	        var mapbox = this.refs.mapbox;
+	        var map = this.refs.map;
 	        downPoint = [event.clientX, event.clientY];
-	        mapbox.onmousemove = this.handleDrag;
-	        mapbox.onmouseup = function (event) {
-	            mapbox.onmousemove = null;
-	            mapbox.onmouseup = null;
+	        map.onmousemove = this.handleDrag;
+	        map.onmouseup = function (event) {
+	            map.onmousemove = null;
+	            map.onmouseup = null;
 	        };
 	    },
 	    getOffsetLonlat: function getOffsetLonlat(offset) {
-	        var tile = this.refs.grid.props.tile;
 	        var realMaxCoordinate = tile.realMaxCoordinate;
 	        var scaleValue = tile.scaleValue;
 	        var column = realMaxCoordinate.column - offset[0] / scaleValue;
@@ -20396,10 +20448,6 @@
 	        return lonlat;
 	    },
 	    handleMouseWheel: function handleMouseWheel(event) {
-	        var state = this.state;
-	        var offset = [state.width * 0.5 - event.clientX, state.height * 0.5 - event.clientY];
-	        var lonlat = this.getOffsetLonlat(offset);
-	        //
 	        var delta = 0;
 	        if (event.wheelDelta) {
 	            delta = event.wheelDelta / 120;
@@ -20409,75 +20457,36 @@
 	        } else if (event.deltaY) {
 	            delta = event.deltaY > 0 ? -1 : 1;
 	        }
-	        console.log(event);
-	        var zoom = parseInt(state.zoom) + delta;
-	        if (zoom < 1) {
-	            zoom = 1;
-	        } else if (zoom > 20) {
-	            zoom = 20;
-	        }
-	        if (state.zoom != zoom) {
+
+	        if (delta !== 0) {
+	            var state = this.state;
+	            var scale = delta > 0 ? 0.5 : 2;
+	            var offset = [(state.width * 0.5 - event.clientX) * scale, (state.height * 0.5 - event.clientY) * scale];
+	            var lonlat = this.getOffsetLonlat(offset);
+	            var zoom = parseInt(state.zoom) + delta;
+	            if (zoom < 1) {
+	                zoom = 1;
+	            } else if (zoom > 20) {
+	                zoom = 20;
+	            }
 	            this.setState({ center: [lonlat.lon, lonlat.lat], zoom: zoom });
+	            // var thisObj = this;
+	            // var zoomCallBack = function(){
+	            //     $(this).removeAttr("style");
+	            //     thisObj.setState({center:[lonlat.lon,lonlat.lat],zoom:zoom});
+	            // }
+	            // $(this.refs.map).animate({zoom:delta>0?2:0.5},100,zoomCallBack)
 	        }
 	    },
 	    render: function render() {
 	        var state = this.state;
 	        var width = state.width;
 	        var height = state.height;
-	        if (!width || !height) {
-	            return null;
-	        }
-	        var server = new MapServer(state.provider);
+	        var server = state.server;
 	        var center = state.center;
-	        var tile = server.getMapTile(center[0], center[1], state.zoom);
-	        return _react2.default.createElement(
-	            'div',
-	            { className: 'mapbox', ref: 'mapbox', onWheel: this.handleMouseWheel, onMouseDown: this.handleDown },
-	            _react2.default.createElement(_Map.Map, { ref: 'grid', width: width, height: height, tile: tile })
-	        );
-	    }
-	});
+	        var zoom = state.zoom;
 
-/***/ },
-/* 169 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.Map = undefined;
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	/**
-	 * 
-	 */
-	var Map = exports.Map = _react2.default.createClass({
-	    displayName: "Map",
-
-	    getInitialState: function getInitialState() {
-	        return {
-	            width: document.documentElement.clientWidth,
-	            height: document.documentElement.clientHeight,
-	            provider: this.props.provider,
-	            center: this.props.center,
-	            zoom: this.props.zoom
-	        };
-	    },
-	    render: function render() {
-	        var width = this.props.width;
-	        var height = this.props.height;
-	        var halftWidth = width * 0.5;
-	        var haltHeight = height * 0.5;
-	        var tile = this.props.tile;
-
-	        var zoom = tile.zoom;
+	        tile = server.getMapTile(center[0], center[1], zoom);
 	        var coordinate = tile.coordinate;
 	        var offsetX = tile.offsetX;
 	        var offsetY = tile.offsetY;
@@ -20488,9 +20497,8 @@
 	        var tileWidth = provider.tileWidth;
 	        var tileHeight = provider.tileHeight;
 	        //
-	        var x = halftWidth - offsetX;
-	        var y = haltHeight - offsetY;
-
+	        var x = width * 0.5 - offsetX;
+	        var y = height * 0.5 - offsetY;
 	        var checkState = function checkState() {
 	            var len = directions.length;
 	            for (var index = 0; index < len; index++) {
@@ -20500,23 +20508,28 @@
 	            }
 	            return false;
 	        };
+	        if (!tileCache) {
+	            tileCache = {};
+	        }
 	        var turn = function turn(direaction, step) {
 	            coordinate = coordinate[direaction](step);
+	            if (urls = tileCache[coordinate]) {
+	                cells.push(_react2.default.createElement(_TileCell.TileCell, { x: x, y: y, urls: urls }));
+	                return;
+	            }
 	            urls = provider.getTileUrls(coordinate);
 	            if (urls) {
-	                cells.push(_react2.default.createElement(TileCell, { x: x, y: y, urls: urls }));
+	                tileCache[coordinate] = urls;
+	                cells.push(_react2.default.createElement(_TileCell.TileCell, { x: x, y: y, urls: urls }));
 	            }
 	        };
-	        var cells = [_react2.default.createElement(TileCell, { x: x, y: y, urls: urls })];
+	        var cells = [_react2.default.createElement(_TileCell.TileCell, { x: x, y: y, urls: urls })];
 	        var directions = [true, true, true, true]; //
 	        var forFlag = true;
 	        var index = 0; //方向
 	        var j = 1; //步速
 	        var z = 1; //某一个方向的总步数
-	        var count = 0;
-	        var date = new Date();
 	        while (forFlag) {
-	            count++;
 	            switch (index) {//right,down,left,up
 	                case 0:
 	                    x += tileWidth;
@@ -20525,7 +20538,6 @@
 	                        directions[0] = false;
 	                        forFlag = checkState();
 	                    }
-
 	                    break;
 	                case 1:
 	                    y += tileHeight;
@@ -20565,18 +20577,32 @@
 	                j = z;
 	            }
 	        }
-	        console.log(count, new Date() - date);
 	        return _react2.default.createElement(
-	            "div",
-	            { className: "map" },
+	            'div',
+	            { className: 'map', ref: 'map', onWheel: this.handleMouseWheel, onMouseDown: this.handleDown },
 	            cells
 	        );
 	    }
 	});
-	/**
-	 * 
-	 */
-	var TileCell = _react2.default.createClass({
+
+/***/ },
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.TileCell = undefined;
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var TileCell = exports.TileCell = _react2.default.createClass({
 	    displayName: "TileCell",
 
 	    handleDragStart: function handleDragStart() {
@@ -20586,6 +20612,9 @@
 	        var urls = this.props.urls;
 	        var len = urls.length;
 	        var style = { top: this.props.y, left: this.props.x };
+	        if (len === 1) {
+	            return _react2.default.createElement("img", { src: urls[0], className: "tilecell", style: style, draggable: "false", onDragStart: this.handleMouse });
+	        }
 	        var imgs = [];
 	        for (var index = 0; index < len; index++) {
 	            imgs.push(_react2.default.createElement("img", { src: urls[index], draggable: "false", onDragStart: this.handleMouse }));
