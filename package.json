@@ -1,5 +1,5 @@
 {
-  "name": "react-view",
+  "name": "react-map",
   "version": "0.0.1",
   "dependencies": {
     "jquery": "^2.2.4",
@@ -12,5 +12,8 @@
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.5.0",
     "webpack": "^1.13.1"
+  },
+  "peerDependencies":{
+    "animate.css": "^3.5.1"
   }
 }

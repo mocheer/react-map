@@ -5,13 +5,26 @@ import {Map}  from './Map.jsx';
  * 
  */
 export const MapBox = React.createClass({
+    getDefaultProps : function () {
+        return {
+            width:0,
+            height:0,
+            zoom:0,
+            minZoom:0,
+            maxZoom:20,
+            doubleClickZoom:true
+        };
+    },
     getInitialState: function(){
         return {
             width:this.props.width,
             height:this.props.height,
             provider:this.props.provider,
             center:this.props.center,//[]
-            zoom:this.props.zoom
+            zoom:this.props.zoom,
+            minZoom:this.props.minZoom,
+            maxZoom:this.props.maxZoom,
+            doubleClickZoom:this.props.doubleClickZoom
         };
     },
     componentDidMount: function(){

@@ -1,5 +1,5 @@
 import React from 'react';
-import {TileCell}  from './TileCell.jsx';
+import {Tile}  from './Tile.jsx';
 
 var tileCache;
 var downPoint;
@@ -55,6 +55,7 @@ export const Map = React.createClass({
         }
        
         if(delta!==0){
+            var map = this.refs.map;
             var state = this.state;
             var scale = delta>0?0.5:2;
             var offset = [(state.width*0.5 - event.clientX)*scale,(state.height*0.5 - event.clientY)*scale];
@@ -65,13 +66,9 @@ export const Map = React.createClass({
             }else if(zoom>20){
                 zoom = 20;
             }
+            map.style.transformOrigin= (event.clientX/state.width).toPercent()+" "+(event.clientY/state.height).toPercent(); //动态设置基点
+            $(map).animateCss(delta>0?'zoomIn':'zoomOut');
             this.setState({center:[lonlat.lon,lonlat.lat],zoom:zoom});
-            // var thisObj = this;
-            // var zoomCallBack = function(){
-            //     $(this).removeAttr("style");
-            //     thisObj.setState({center:[lonlat.lon,lonlat.lat],zoom:zoom});
-            // }
-            // $(this.refs.map).animate({zoom:delta>0?2:0.5},100,zoomCallBack)
         }
     },
     render: function() {
@@ -110,16 +107,16 @@ export const Map = React.createClass({
         var turn = function (direaction,step) {
             coordinate = coordinate[direaction](step);
             if(urls = tileCache[coordinate]){
-                cells.push(<TileCell x={x} y={y} urls={urls} ></TileCell>)
+                cells.push(<Tile x={x} y={y} urls={urls} ></Tile>)
                 return ;
             } 
             urls = provider.getTileUrls(coordinate);
             if(urls){
                 tileCache[coordinate] = urls;
-                cells.push(<TileCell x={x} y={y} urls={urls} ></TileCell>)
+                cells.push(<Tile x={x} y={y} urls={urls} ></Tile>)
             } 
         }
-        var cells = [<TileCell x={x} y={y} urls={urls} ></TileCell>];
+        var cells = [<Tile x={x} y={y} urls={urls} ></Tile>];
         var directions=[true,true,true,true];//
         var forFlag = true;
         var index = 0;//方向

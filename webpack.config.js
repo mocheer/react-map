@@ -13,11 +13,11 @@ module.exports = {
     module: {
         loaders: [
             {
-                 test: /\.jsx$/,
+                 test: /\.js(x)?$/,
                  exclude: /(node_modules|bower_components)/,//npm,bower
                  loader: 'babel-loader',
                  query:{presets:['es2015','react']}//如果使用的是loaders，就不能用 query，应该把presets参数写在 babel 的后面
-            },   
+            }
         ],
     },
     plugins: [

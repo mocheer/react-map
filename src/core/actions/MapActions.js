@@ -1,9 +1,11 @@
-class MapActions {
+export class MapActions {
     zoomAction() {
         
     }
     panToAction() {
         
     }
+    resizeAction(){
+
+    }
 }
-module.exports = MapActions;
