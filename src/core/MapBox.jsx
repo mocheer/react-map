@@ -40,11 +40,9 @@ export const MapBox = React.createClass({
         if(!width || !height){
             return null;
         }
-        var server = new MapServer(state.provider);
-        var center = state.center;
         return (
-           <div className="mapbox" ref="mapbox"  >
-                <Map  width={width} height={height} server={server} center={center} zoom={state.zoom} ></Map>
+           <div className="mapbox">
+                <Map width={width} height={height} provider={state.provider} center={state.center} zoom={state.zoom} ></Map>
            </div>
        );
     }

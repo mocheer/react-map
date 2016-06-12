@@ -6,11 +6,12 @@
     <link rel="stylesheet" type="text/css" href="css/react-map.css" />
   </head>
   <body>
-       <div id="map"></div>
+       <div id="map" provider="GoogleProvider_AERIAL" center="118.17939,25.30781" zoom="4" ></div>
   </body>
   <script src="js/map.js"></script>
   <script src="js/react-map.js"></script>
   <script>
-      ReactMap.render("map");
+      //ReactMap.render(map);//浏览器兼容问题
+      ReactMap.render(document.getElementById("map"));
   </script>
 </html>

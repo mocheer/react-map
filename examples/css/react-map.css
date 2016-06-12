@@ -3,21 +3,27 @@
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,ruby,section,summary,time,mark,audio,video{margin:0;padding:0;border:0;font-size:100%;font:inherit;vertical-align:baseline}article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section{display:block}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}table{border-collapse:collapse;border-spacing:0}
 
 html,body{
-    height: 100%;
-    width: 100%;
+  height: 100%;
+  width: 100%;
 }
 #map{
-    width:100%;height:100%;
- }
- 
-.mapbox,.map {
-    position:relative;/*加上position:relative;才能将含有position:absolute属性的子元素进行溢出隐藏！*/
-    overflow:hidden;
-    width:100%;height:100%;
+  width:100%;height:100%;
 }
+ 
+.mapbox,.map{
+  background-color:#8AA0AB;
+  position:relative;/*加上position:relative;才能将含有position:absolute属性的子元素进行溢出隐藏！*/
+  overflow:hidden;
+  width:100%;height:100%;
+}
+
+.tilegrid{
+  width:100%;height:100%;
+  position:absolute;
+}
+
 .tile {
     position: absolute;
-    /*width:auto;height:auto;*/
 }
 
 /*animate*/

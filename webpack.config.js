@@ -1,7 +1,7 @@
 var webpack = require('webpack');  
 module.exports = {
     entry: {
-        "react-map":'./src/ReactMap.jsx'
+        "react-map":'./src/ReactMap.js'
     },
     output: {
         path: __dirname,
@@ -27,7 +27,7 @@ module.exports = {
             "window.jQuery": "jquery"
         }),
         // new webpack.optimize.CommonsChunkPlugin('common.js'),
-        // new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}})//相当于webpack -p
+        new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}})//相当于webpack -p
     ]
 }
 
