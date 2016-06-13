@@ -1,16 +1,18 @@
 import React from 'react';
-var tileCache = {};
 export class TilePool{
     constructor(server,state) {
         this.server = server;
         this.state = state;
-        this.tileCache = tileCache;
+        this.tileCache = {};
         //
+    }
+    getTiles(){
+        var state = this.state;
+        var server = this.server;
         var zoom = state.zoom;
         var center = state.center;
         this.tile = server.getMapTile(center[0],center[1],zoom);
-    }
-    getTiles(){
+        //
         var state = this.state;
         var tileCache = this.tileCache;
         var tile = this.tile;
@@ -131,6 +133,18 @@ export class TilePool{
                 {imgs}
            </div>
        );
+    }
+    getOffsetLonlat(offset){
+        var tile = this.tile;
+        var realMaxCoordinate = tile.realMaxCoordinate;
+        var scaleValue = tile.scaleValue;
+        var column = realMaxCoordinate.column - offset[0]/scaleValue;
+        var row = realMaxCoordinate.row - offset[1]/scaleValue;
+        var coordinate = realMaxCoordinate.clone();
+        coordinate.row = row;
+        coordinate.column = column;
+        var lonlat = tile.provider.coordinateLocation(coordinate);
+        return lonlat;
     }
     handleDrageStart(){
         return false;

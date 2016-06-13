@@ -1,4 +1,6 @@
-export class MapActions {
+export class ControlActions {
+    constructor() {
+    }
     /**
      * 缩放
      */

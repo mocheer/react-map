@@ -13,7 +13,8 @@
     "babel-preset-react": "^6.5.0",
     "webpack": "^1.13.1"
   },
-  "peerDependencies":{
-    "animate.css": "^3.5.1"
+  "bugs":{
+    "url" : "http://github.com/mocheer/react-map/issues",
+    "email" : "mocheer@foxmail.com"
   }
 }

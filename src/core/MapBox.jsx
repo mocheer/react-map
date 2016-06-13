@@ -1,48 +1,47 @@
 import React from 'react';
 import {Map}  from './Map.jsx';
-
+import {MapState}  from './MapState.js';
 /**
  * 
  */
 export const MapBox = React.createClass({
-    getDefaultProps : function () {
-        return {
-            width:0,
-            height:0,
-            zoom:0,
-            minZoom:0,
-            maxZoom:20,
-            doubleClickZoom:true
-        };
+    getDefaultProps: function () {
+        return MapState.options;
     },
     getInitialState: function(){
         return {
             width:this.props.width,
             height:this.props.height,
-            provider:this.props.provider,
-            center:this.props.center,//[]
-            zoom:this.props.zoom,
-            minZoom:this.props.minZoom,
-            maxZoom:this.props.maxZoom,
-            doubleClickZoom:this.props.doubleClickZoom
         };
+    },
+    componentWillMount:function() {
+        MapState.setState(this.props);
     },
     componentDidMount: function(){
         window.addEventListener('resize', this.handleResize);
+    },
+    shouldComponentUpdate:function(newProps, newState) {
+        var state = this.state;
+        var shouldUpdate = newState.width!==state.width || newState.height!==state.height;
+        if(shouldUpdate === flase){
+            shouldUpdate = newProps.width!==state.width || newProps.height!==state.height;
+        }
+        return shouldUpdate;
+    },
+    componentWillUpdate:function(nextProps, nextState) {
+        if(this.props!==nextProps){
+           MapState.setState(this.props);
+        }else{
+           MapState.setState(nextState);
+        }
     },
     handleResize: function(event) {
        
     },
     render: function() {
-        var state = this.state;
-        var width = state.width;
-        var height = state.height;
-        if(!width || !height){
-            return null;
-        }
         return (
            <div className="mapbox">
-                <Map width={width} height={height} provider={state.provider} center={state.center} zoom={state.zoom} ></Map>
+                <Map  ></Map>
            </div>
        );
     }
