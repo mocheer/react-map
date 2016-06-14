@@ -21,11 +21,11 @@ module.exports = {
         ],
     },
     plugins: [
-        new webpack.ProvidePlugin({
-            $: "jquery",
-            jQuery: "jquery",
-            "window.jQuery": "jquery"
-        }),
+        // new webpack.ProvidePlugin({
+        //     $: "jquery",
+        //     jQuery: "jquery",
+        //     "window.jQuery": "jquery"
+        // }),
         // new webpack.optimize.CommonsChunkPlugin('common.js'),
         new webpack.optimize.UglifyJsPlugin({compress: {warnings: false}})//相当于webpack -p
     ]

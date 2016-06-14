@@ -1,3 +1,6 @@
+/**
+ * 地图参数：初始化参数/状态
+ */
 export var MapOptions ={
     //map box
     width:null,
@@ -12,11 +15,16 @@ export var MapOptions ={
     crs:"EPSG3857",
     //map interaction
     draggable:true,
+    touchZoom:true,
     scrollWheelZoom:true,
     doubleClickZoom:true,
+    //layer interaction
+    clickable:true,
+    markerdraggable:true,
+    //animation
+    zoomAnimation:true,
     //contorl
     zoomControl:true,
     scaleControl:true,
-    //
-    tilePool:null
+    navigatorControl:false
 }

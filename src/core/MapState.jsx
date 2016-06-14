@@ -1,44 +1,68 @@
 import React from 'react';
-export class TilePool{
-    constructor(server,state) {
-        this.server = server;
-        this.state = state;
+
+class GlobalState{
+    constructor() {
+        this.state = {};
         this.tileCache = {};
-        //
+        this.tilePool = null;
+        this.downPoint = null;
+    }
+    setState(newState){
+        for (var key in newState) {
+            if (newState.hasOwnProperty(key)) {
+                var value = newState[key];
+                if(this.state[key] !== value){
+                    this.state[key] = value;
+                }
+            }
+        }
     }
     getTiles(){
         var state = this.state;
-        var server = this.server;
+        var server = new MapServer(state.provider);
         var zoom = state.zoom;
         var center = state.center;
-        this.tile = server.getMapTile(center[0],center[1],zoom);
-        //
-        var state = this.state;
+        var tile = this.tile = server.getMapTile(center[0],center[1],zoom);
         var tileCache = this.tileCache;
-        var tile = this.tile;
         //
         var width = state.width;
         var height = state.height;
         //
         var coordinate = tile.coordinate;
-        var offsetX = tile.offsetX;
-        var offsetY = tile.offsetY;
+        var offset = tile.offset;
         var scaleValue = tile.scaleValue;
         var urls;
         if(tileCache[coordinate]){
             urls =  tileCache[coordinate];
         }else{
-            urls = tile.urls;
+            urls = tile.getUrls();
             tileCache[coordinate] = urls;
         }
-        var getTile = urls.length==1?this.getImg:this.getImgs;
+        var createImg = function(x,y,urls){
+            var style = {top:y,left:x};
+            return <img className="tile" src={urls[0]} style={style} draggable="false" />
+        }
+        var createImgs = function(x,y,urls){
+            var imgs = [];
+            var len = urls.length;
+            var style = {top:y,left:x};
+            for (var index = 0; index < len; index++) {
+                imgs.push(<img src={urls[index]} draggable="false" />)
+            }
+            return (
+                <div className="tile" style={style}  >
+                        {imgs}
+                </div>
+            );
+        }
+        var getTile = urls.length==1?createImg:createImgs;
         //
         var provider = tile.provider;
         var tileWidth = provider.tileWidth;
         var tileHeight = provider.tileHeight;
         //
-        var x = width*0.5-offsetX;
-        var y = height*0.5-offsetY;
+        var x = width*0.5-offset[0];
+        var y = height*0.5-offset[1];
         var checkState = function (){
             var len = directions.length;
             for (var index = 0; index < len; index++) {
@@ -116,43 +140,48 @@ export class TilePool{
         }
         return tiles;
     }
-    getImg(x,y,urls){
-        var style = {top:y,left:x};
-        // onDragStart={this.handleDrageStart} 
-        return <img className="tile" src={urls[0]}  style={style} draggable="false" />
-    }
-    getImgs(x,y,urls){
-        var imgs = [];
-        var len = urls.length;
-        var style = {top:y,left:x};
-        for (var index = 0; index < len; index++) {
-            imgs.push(<img src={urls[index]} draggable="false" />)
-        }
-        return (
-           <div className="tile" style={style}  >
-                {imgs}
-           </div>
-       );
-    }
     getOffsetLonlat(offset){
-        var tile = this.tile;
-        var realMaxCoordinate = tile.realMaxCoordinate;
-        var scaleValue = tile.scaleValue;
-        var column = realMaxCoordinate.column - offset[0]/scaleValue;
-        var row = realMaxCoordinate.row - offset[1]/scaleValue;
-        var coordinate = realMaxCoordinate.clone();
-        coordinate.row = row;
-        coordinate.column = column;
-        var lonlat = tile.provider.coordinateLocation(coordinate);
-        return lonlat;
+        return this.tile.getOffsetLonlat(offset);
     }
-    handleDrageStart(){
-        return false;
+    mousedown(e){
+        this.downPoint = [e.clientX,e.clientY];
     }
-    //图片预加载
-    preLoadImg(url) {
-        var img = new Image();
-        img.src = url;
+    mouseup(e){
+        this.downPoint = null;
     }
-
+    mousedrag(e){
+        var downPoint = this.downPoint;
+        if(downPoint){
+            var offset = [e.clientX-downPoint[0], e.clientY-downPoint[1]];
+            downPoint[0] = e.clientX;
+            downPoint[1] = e.clientY;
+            return {offset:offset};
+        }
+    }
+    scrollWheel(e){
+        var delta = 0;
+        if (e.wheelDelta) {
+            delta = e.wheelDelta/120; 
+            if (window.opera) delta = -delta;
+        } else if (e.detail) {
+            delta = -e.detail/3;
+        }else if(e.deltaY){
+            delta = e.deltaY>0?-1:1;
+        }
+        if(delta!==0){
+            var state = this.state;
+            var zoom = parseInt(this.state.zoom) + delta;
+            if(zoom<1){
+                zoom = 1;
+            }else if(zoom>20){
+                zoom = 20;
+            }
+            var scale = delta>0?0.5:2;
+            var offset = [(state.width*0.5 - e.clientX)*scale,(state.height*0.5 - e.clientY)*scale];//缩放基点的屏幕坐标
+            return {zoom:zoom,offset:offset};
+        }
+        return null;
+    }
+    
 }
+export var MapState = new GlobalState();

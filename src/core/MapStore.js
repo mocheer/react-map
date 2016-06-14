@@ -1,5 +1,16 @@
-// import Redux from 'redux';
-const Redux = require("redux");
-import {MapReducer} from './reducers/MapReducer.js';
-
-export const MapStore = Redux.createStore(MapReducer);
+import {createStore} from 'redux';
+/**
+ * 
+ */
+function MapReducer(state, action){
+    switch(action.type){
+        case 'panTo':
+        case 'zoomIn':
+        case 'zoomOut':
+        case 'zoomTo':
+           return action.state;
+        default:
+           return state;
+    }
+};
+export const MapStore = createStore(MapReducer);

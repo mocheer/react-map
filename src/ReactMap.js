@@ -2,8 +2,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {MapBox} from './core/MapBox.jsx';
-import {Global} from './utility/Global.js';
-import {Utility} from './utility/Utility.js';
+import {Global} from './utilities/Global.js';
+import {Utility} from './utilities/Utility.js';
 
 // Utility.loadAnimateCss();//装载动画工具;
 Utility.loadExtend();//装载基础类型拓展工具

@@ -1,12 +1,13 @@
 import React from 'react';
-import {Map}  from './Map.jsx';
-import {MapState}  from './MapState.js';
+import {Map}  from './Map';
+import {MapState}  from './MapState';
+import {MapOptions}  from './MapOptions';
 /**
  * 
  */
 export const MapBox = React.createClass({
     getDefaultProps: function () {
-        return MapState.options;
+        return MapOptions;
     },
     getInitialState: function(){
         return {
@@ -41,7 +42,7 @@ export const MapBox = React.createClass({
     render: function() {
         return (
            <div className="mapbox">
-                <Map  ></Map>
+                <Map></Map>
            </div>
        );
     }

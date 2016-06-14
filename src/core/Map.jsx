@@ -1,7 +1,8 @@
 import React from 'react';
-import {MapState}  from './MapState.js';
-import {MapStore}  from './MapStore.js';
-import {TileLayer}  from './layer/TileLayer.jsx';
+import {MapState}  from './MapState';
+import {MapStore}  from './MapStore';
+import {zoomTo,panTo}  from './MapActions';
+import {TileLayer}  from './layers/TileLayer';
 /**
  * 
  */
@@ -14,7 +15,6 @@ export const Map = React.createClass({
     componentDidMount: function(){
         MapStore.subscribe(this.onChange);
     },
-    
     onChange: function(){
         var state = this.state;
         var nextState = MapStore.getState();
@@ -34,15 +34,18 @@ export const Map = React.createClass({
     },
     handleDrag: function(e) {
         var event = MapState.mousedrag(e);
-        MapStore.dispatch(event);
+        var lonlat = MapState.getOffsetLonlat(event.offset);
+        lonlat = [lonlat.lon,lonlat.lat];
+        MapStore.dispatch(panTo(lonlat));
     },
     handleMouseWheel: function(e){
         var event = MapState.scrollWheel(e);
-        if(event){
-            MapStore.dispatch(event);
-            var map = this.refs.map;
-            // map.style.transformOrigin= (e.clientX/state.width).toPercent()+" "+(e.clientY/state.height).toPercent(); //动态设置基点
-            // $(map).animateCss(delta>0?'zoomIn':'zoomOut');
+        if(event!==null){
+            var offset = event.offset;
+            var zoom = event.zoom;
+            var lonlat = MapState.getOffsetLonlat(offset);//缩放基点的经纬度
+            lonlat = [lonlat.lon,lonlat.lat];
+            MapStore.dispatch(zoomTo(zoom,lonlat));
         }   
     },
     render: function() {
