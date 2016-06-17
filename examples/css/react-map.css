@@ -10,16 +10,16 @@ html,body{
   width:100%;height:100%;
 }
  
-.mapbox,.map{
-  background-color:#8AA0AB;
+.mapbox{
   position:relative;/*加上position:relative;才能将含有position:absolute属性的子元素进行溢出隐藏！*/
   overflow:hidden;
   width:100%;height:100%;
+  background-color:#8AA0AB;
 }
 
-.tilelayer{
-  width:100%;height:100%;
+.map{
   position:absolute;
+  width:100%;height:100%;
 }
 
 .tile {

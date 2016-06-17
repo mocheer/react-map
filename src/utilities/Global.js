@@ -1,5 +1,5 @@
 // set global
-export class Global{
+export default class Global{
     constructor(name) { //构造函数
           this.name = name;
     }

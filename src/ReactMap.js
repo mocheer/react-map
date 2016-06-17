@@ -1,27 +1,28 @@
 'use strict';
 import React from 'react';
-import ReactDOM from 'react-dom';
-import {MapBox} from './core/MapBox.jsx';
-import {Global} from './utilities/Global.js';
-import {Utility} from './utilities/Utility.js';
-
-// Utility.loadAnimateCss();//装载动画工具;
+import App from './core/App';
+import {render} from 'react-dom';
+import {Provider} from 'react-redux';
+import Global from './utilities/Global';
+import Utility from './utilities/Utility';
+import configureStore from './core/MapStore';
 Utility.loadExtend();//装载基础类型拓展工具
+// Utility.loadAnimateCss();//装载动画工具;
+
 export var ReactMap = {};
 //render
 ReactMap.render = function(element){
-    // var element = document.getElementById(id);
     var attributes = element.attributes;//NamedNodeMap  
-    var props = parseAttr(attributes);//
-    //
-    props.width = element.offsetWidth;
-    props.height = element.offsetHeight;
-    //
-    var reactElement = React.createElement(MapBox, props)
-    ReactDOM.render(reactElement, element);
+    var props = parseAttr(attributes,element.offsetWidth,element.offsetHeight);//
+    const store = configureStore(props);
+    render(
+     <Provider store={store}>
+        <App />
+     </Provider>,
+     element)
 }
 
-function parseAttr(attributes){
+function parseAttr(attributes,w,h){
     //provider
     var provider = attributes.provider.value;
     //center
@@ -32,9 +33,14 @@ function parseAttr(attributes){
     //zoom
     var zoom = parseInt(attributes.zoom.value);
     return {
-        provider:provider,
-        center:center,
-        zoom:zoom
+      mapOptions:{
+          width:w,
+          height:h,
+          source:provider,
+          center:center,
+          zoom:zoom
+        }
+     
     };
 }
 

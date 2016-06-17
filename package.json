@@ -1,11 +1,17 @@
 {
   "name": "react-map",
   "version": "0.0.1",
+  "script": {
+    "build": "WEBPACK_ENV=build webpack",
+    "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch"
+  },
   "dependencies": {
-    "jquery": "^2.2.4",
+    "object-assign": "^4.1.0",
     "react": "^15.1.0",
     "react-dom": "^15.1.0",
-    "redux": "^3.5.2"
+    "react-redux": "^4.4.5",
+    "redux": "^3.5.2",
+    "redux-thunk": "^2.1.0"
   },
   "devDependencies": {
     "babel-loader": "^6.2.4",
@@ -13,8 +19,8 @@
     "babel-preset-react": "^6.5.0",
     "webpack": "^1.13.1"
   },
-  "bugs":{
-    "url" : "http://github.com/mocheer/react-map/issues",
-    "email" : "mocheer@foxmail.com"
+  "bugs": {
+    "url": "http://github.com/mocheer/react-map/issues",
+    "email": "mocheer@foxmail.com"
   }
 }
