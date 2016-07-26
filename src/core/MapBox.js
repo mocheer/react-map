@@ -12,6 +12,7 @@ export default class MapBox extends Component {
         this.tile = this.server.getMapTile(center[0],center[1],zoom);
     }
     componentDidMount(){
+        // const {resize} = this.props;
         // window.addEventListener('resize', (e)=>{resize(e)});
     }
     shouldComponentUpdate(newProps, newState) {
@@ -36,9 +37,6 @@ export default class MapBox extends Component {
             map.onmousemove = e=>{
                 const {clientX,clientY} = e;
                 var offset = [clientX-downPoint[0], clientY - downPoint[1]];
-                const {offsetLeft,offsetTop} = map;
-                // map.style.left = offsetLeft + offset[0] +"px";
-                // map.style.top = offsetTop + offset[1] +"px";
                 downPoint = [clientX,clientY];
                 var lonlat = this.tile.getOffsetLonlat(offset);
                 panTo(lonlat);
@@ -71,17 +69,18 @@ export default class MapBox extends Component {
                 zoom = maxZoom;
             }
             var scale = delta>0?0.5:2;
-            var offset = [(width*0.5 - e.clientX)*scale,(height*0.5 - e.clientY)*scale];//缩放基点的屏幕坐标
+            const {clientX,clientY} = e;
+            var offset = [(width*0.5 - clientX)*scale,(height*0.5 - clientY)*scale];//缩放基点的屏幕坐标
             //
             var lonlat = this.tile.getOffsetLonlat(offset);//缩放基点的经纬度
             lonlat = [lonlat.lon,lonlat.lat];
+            //
             zoomTo(zoom,lonlat);
+            
         }
     }
-    //onMouseUp={(e)=>{mouseup(e)}}
     render() {
         const {mapboxOptions,mapOptions,controlOptions} = this.props;
-        // var style = {left:0,top:0} style={style}
         return (
             <div className="mapbox">
                <div className="map" ref="map"  onWheel={this.handleMouseWheel.bind(this)} onMouseDown={this.handleMouseDown.bind(this)}  >

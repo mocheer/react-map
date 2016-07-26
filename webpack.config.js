@@ -22,9 +22,6 @@ var config = {
         ],
     },
     plugins: [
-        // new webpack.ProvidePlugin({
-        //     $: "jquery"
-        // }),  
         new webpack.optimize.OccurenceOrderPlugin(),//维持构建编译代码
         new webpack.optimize.UglifyJsPlugin({compress: {warnings: false},minimize:true}),//相当于webpack -p 压缩代码 
         new webpack.HotModuleReplacementPlugin(),//热替换,不用刷新页面，可用于生产环境

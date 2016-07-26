@@ -19,6 +19,9 @@ export default class TileLayer extends Component {
         // this.tiles = this.getTiles(nextProps);
         this.tiles = this.getTiles(nextProps);
       }
+      createImg(urls,style){
+            return <img className="tile" key={urls[0]} src={urls[0]} style={style} draggable="false" />
+      }
       getTiles(props){//get tiles after update zoom,provider
         var tileCache = this.tileCache;
         var {width,height,tile} = props;
@@ -38,9 +41,7 @@ export default class TileLayer extends Component {
         var y = height*0.5-offset[1]
         var style = {left:x,top:y};
 
-        var createImg = function(urls,style){
-            return <img className="tile" key={urls[0]} src={urls[0]} style={style} draggable="false" />
-        }
+        var createImg = this.createImg;
         var checkState = function (){
             for (var index = 0; index < 4; index++) {
                 if(directions[index]){
@@ -133,9 +134,10 @@ export default class TileLayer extends Component {
         }
         return tiles;
     }
+
     render() {
         return (
-            <div className="tilelayer" >
+            <div className="tilelayer">
                 {this.tiles}
             </div>
         );

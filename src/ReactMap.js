@@ -40,7 +40,6 @@ function parseAttr(attributes,w,h){
           center:center,
           zoom:zoom
         }
-     
     };
 }
 
