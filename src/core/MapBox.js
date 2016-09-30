@@ -1,3 +1,4 @@
+import {Map} from 'map'
 import React,{Component,PropTypes} from 'react'
 import TileLayer from './layers/TileLayer';
 /**
@@ -8,7 +9,7 @@ export default class MapBox extends Component {
         super(props);
         const {mapOptions} = props;
         const {source,center,zoom} = mapOptions;
-        this.server = new MapServer(source);
+        this.server = new Map(source);
         this.tile = this.server.getMapTile(center[0],center[1],zoom);
     }
     componentDidMount(){
