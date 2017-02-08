@@ -2,9 +2,10 @@
   "name": "react-map",
   "version": "0.0.1",
   "main": "index.js",
-  "script": {
-    "build": "WEBPACK_ENV=build webpack",
-    "dev": "WEBPACK_ENV=dev webpack --progress --colors --watch"
+  "scripts": {
+    "build": "SET task=build&webpack",
+    "build-watch": "SET task=build&webpack --watch",
+    "dev": "SET task=dev&webpack --progress --colors --watch"
   },
   "dependencies": {
     "map": "github:mocheer/map",

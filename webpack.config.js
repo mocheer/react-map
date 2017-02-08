@@ -9,7 +9,7 @@ var config = {
         filename: 'examples/js/[name].js'
     },
     resolve: {
-        extensions: ['', '.js', '.jsx','ts']
+        extensions: ['', '.js', '.jsx','.ts']
     },
     module: {
         loaders: [
