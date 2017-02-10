@@ -1,4 +1,4 @@
-import {Map} from 'map'
+import TMap from 'map'
 import React,{Component,PropTypes} from 'react'
 import TileLayer from './layers/TileLayer';
 /**
@@ -9,8 +9,8 @@ export default class MapBox extends Component {
         super(props);
         const {mapOptions} = props;
         const {source,center,zoom} = mapOptions;
-        this.server = new Map(source);
-        this.tile = this.server.getMapTile(center[0],center[1],zoom);
+        this.server = new TMap(source);
+        this.tile = this.server.getTile(center[0],center[1],zoom);
     }
     componentDidMount(){
         // const {resize} = this.props;
@@ -23,7 +23,7 @@ export default class MapBox extends Component {
     componentWillUpdate(nextProps, nextState) {
        const {mapOptions} = nextProps;
        const {center,zoom} = mapOptions;
-       this.tile = this.server.getMapTile(center[0],center[1],zoom);
+       this.tile = this.server.getTile(center[0],center[1],zoom);
     }
     /**
      * 鼠标按下
